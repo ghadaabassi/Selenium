@@ -1,43 +1,45 @@
 pipeline {
     agent any
     tools {
-        maven 'maven' // Ensure the Maven tool is properly configured in Jenkins.
+        maven 'maven'
     }
     stages {
-        stage('Clean Workspace') {
+        stage('Checkout') {
             steps {
-                cleanWs() // Clean the workspace to avoid residual files interfering.
+                checkout scm
             }
         }
-        stage('Build') {
+        stage('Debug Workspace') {
             steps {
-                sh 'mvn -B clean compile' // Always clean before compiling.
+                sh 'pwd && ls -la'
             }
         }
-        stage('Test') {
+        stage('Build & Test') {
             steps {
-                // Run tests and generate the Cucumber JSON report.
-                sh 'mvn -B test -Dcucumber.options="--plugin json:target/cucumber.json"'
+                sh 'mvn -B clean compile install'
             }
         }
-        stage('Verify Report') {
+        stage('Generate Cucumber Report') {
             steps {
-                // Check if the cucumber.json file exists after the test stage.
-                sh 'ls -l target/cucumber.json'
-            }
-        }
-        stage('Publish Report') {
-            steps {
-                // Publish the Cucumber report to Jenkins.
                 cucumber buildStatus: 'UNCHANGED',
-                         fileIncludePattern: '**/cucumber.json',
+                         fileIncludePattern: 'target/cucumber.json',
                          sortingMethod: 'ALPHABETICAL'
             }
         }
         stage('Archive') {
             steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true // Archive the built artifacts.
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
+        }
+    }
+    post {
+        always {
+            echo 'Pipeline execution complete.'
+            sh 'ls -la target'
+        }
+        failure {
+            echo 'Pipeline failed. Debugging...'
+            sh 'ls -la'
         }
     }
 }
