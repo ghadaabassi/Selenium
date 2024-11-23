@@ -32,14 +32,17 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-            echo 'Pipeline execution complete.'
-            sh 'ls -la target'
-        }
-        failure {
-            echo 'Pipeline failed. Debugging...'
-            sh 'ls -la'
-        }
-    }
+   stage('Cucumber Report') {
+               steps {
+                   script {
+                       // Générer le rapport Cucumber après l'exécution des tests
+                       publishHTML(target: [
+                           reportName: 'Cucumber Report',
+                           reportDir: 'target',
+                           reportFiles: 'cucumber-report.json'
+                       ])
+                   }
+               }
+           }
+
 }
