@@ -4,57 +4,20 @@ pipeline {
         maven 'maven'
     }
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                checkout scm
+                sh 'mvn -B compile'
             }
         }
-
-        stage('Debug Workspace') {
+        stage('Test') {
             steps {
-                sh 'pwd && ls -la'
+                sh 'mvn -B clean install'
+                cucumber failedFeaturesNumber: -1, failedScenariosNumber: -1, failedStepsNumber: -1, fileIncludePattern: '**/*.json', pendingStepsNumber: -1, skippedStepsNumber: -1, sortingMethod: 'ALPHABETICAL', undefinedStepsNumber: -1
             }
         }
-
-        stage('Build & Test') {
+        stage('Archive') {
             steps {
-                sh 'mvn -B clean compile install'
-            }
-        }
-
-        stage('Generate Cucumber Report') {
-            steps {
-                script {
-                    if (fileExists('target/cucumber.json')) {
-                        cucumber buildStatus: 'UNCHANGED',
-                                 fileIncludePattern: 'target/cucumber.json',
-                                 sortingMethod: 'ALPHABETICAL'
-                    } else {
-                        echo 'No cucumber.json file found'
-                    }
-                }
-            }
-        }
-
-        stage('Archive JARs') {
-            steps {
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
-
-        stage('Publish Cucumber HTML Report') {
-            steps {
-                script {
-                    if (fileExists('target/cucumber-report.json')) {
-                        publishHTML(target: [
-                            reportName: 'Cucumber Report',
-                            reportDir: 'target',
-                            reportFiles: 'cucumber-report.json'
-                        ])
-                    } else {
-                        echo 'Cucumber report not found.'
-                    }
-                }
+                archiveArtifacts 'target/*.jar'
             }
         }
     }

@@ -7,25 +7,23 @@ import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxBinary;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.time.Duration;
 
 public class GoogleSearchSteps {
     public WebDriver driver;
-    public FirefoxBinary firefoxBinary;
 
-    // Set system property correctly within the createWebDriver method
     @Before
     public void createWebDriver() {
-        System.setProperty("webdriver.gecko.driver", "C:\\Users\\Ghada\\Downloads\\geckodriver-v0.25.0-win64\\geckodriver.exe");
-        firefoxBinary = new FirefoxBinary(); // Proper initialization
-
-        // Configure Firefox options for headless mode
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setBinary(firefoxBinary);
-        firefoxOptions.addArguments("--headless");
-        driver = new FirefoxDriver(firefoxOptions);
+        // Configure Edge options
+        EdgeOptions edgeOptions = new EdgeOptions();
+        // Remove --headless if you want to debug interactively
+        edgeOptions.addArguments("--headless");
+        driver = new EdgeDriver(edgeOptions);
     }
 
     @After
@@ -42,13 +40,25 @@ public class GoogleSearchSteps {
 
     @When("I lookup the word {string}")
     public void i_lookup_the_word(String string) {
-        driver.findElement(By.name("q")).clear();
-        driver.findElement(By.name("q")).sendKeys(string);
-        driver.findElement(By.name("btnK")).click();
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        // Wait for the search box to be visible and interactable
+        WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        searchBox.clear();
+        searchBox.sendKeys(string);
+
+        // Wait for the search button to be clickable
+        WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(By.name("btnK")));
+        searchButton.click();
     }
 
     @Then("Search results display the word {string}")
     public void search_results_display_the_word(String string) {
+        // Wait for the page title to contain the search word
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait.until(ExpectedConditions.titleContains(string));
+
+        // Check if the search word is in the page title
         boolean isWordPresent = driver.getTitle().contains(string);
         System.out.println("Search result contains the word: " + isWordPresent);
         assert isWordPresent : "The word is not present in the search results";
