@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -87,15 +86,23 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-
+			<!-- Maven Surefire plugin to run tests, including Cucumber tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version> <!-- Version stable -->
+				<version>3.0.0-M5</version> <!-- Ensure you are using a stable version -->
+				<configuration>
+					<!-- Include all test classes matching this pattern -->
+					<includes>
+						<include>**/*Tests.java</include>
+					</includes>
 
+					<!-- Add Cucumber options for the plugin -->
+					<testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+					<parallel>all</parallel>
+					<useUnlimitedThreads>true</useUnlimitedThreads>
+				</configuration>
 			</plugin>
-
-
 		</plugins>
 	</build>
 </project>
