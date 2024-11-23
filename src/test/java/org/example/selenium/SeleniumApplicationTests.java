@@ -7,7 +7,6 @@ import io.cucumber.junit.CucumberOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(Cucumber.class)
-@SpringBootTest
 @CucumberOptions(
 		features = "src/test/resources",
 		glue = {"stepDefinitions"},
