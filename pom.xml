@@ -3,13 +3,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.5</version>
-		<relativePath/>
-	</parent>
-
 	<groupId>org.example</groupId>
 	<artifactId>Selenium</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -21,19 +14,6 @@
 	</properties>
 
 	<dependencies>
-		<!-- Spring Boot Starter -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
-
-		<!-- Spring Boot Starter Test for testing -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-
 		<!-- Selenium WebDriver dependency -->
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
@@ -81,9 +61,18 @@
 
 	<build>
 		<plugins>
+			<!-- Cucumber Maven Plugin (for running cucumber tests) -->
 			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
+				<groupId>io.cucumber</groupId>
+				<artifactId>cucumber-maven-plugin</artifactId>
+				<version>7.13.0</version> <!-- Latest version -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>execute</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
