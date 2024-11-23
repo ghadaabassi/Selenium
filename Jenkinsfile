@@ -25,7 +25,6 @@ pipeline {
         stage('Generate Cucumber Report') {
             steps {
                 script {
-                    // Vérifiez que le fichier JSON de Cucumber existe avant de tenter de générer le rapport
                     if (fileExists('target/cucumber.json')) {
                         cucumber buildStatus: 'UNCHANGED',
                                  fileIncludePattern: 'target/cucumber.json',
@@ -46,7 +45,6 @@ pipeline {
         stage('Publish Cucumber HTML Report') {
             steps {
                 script {
-                    // Vérification de l'existence du fichier de rapport JSON avant publication
                     if (fileExists('target/cucumber-report.json')) {
                         publishHTML(target: [
                             reportName: 'Cucumber Report',
