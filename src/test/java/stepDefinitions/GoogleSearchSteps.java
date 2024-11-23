@@ -17,21 +17,9 @@ public class GoogleSearchSteps {
 
     @Before
     public void createWebDriver() {
-        // Initialize FirefoxBinary
-        firefoxBinary = new FirefoxBinary();
-        firefoxBinary.addCommandLineOptions("--headless");
-        firefoxBinary.addCommandLineOptions("--no-sandbox");
-
-        // Set GeckoDriver path (adjust to your system)
-        System.setProperty("webdriver.gecko.driver", "/usr/bin/geckodriver");
-
-        // Configure FirefoxOptions
-        FirefoxOptions firefoxOptions = new FirefoxOptions();
-        firefoxOptions.setBinary(firefoxBinary);
-
-        // Initialize WebDriver
-        driver = new FirefoxDriver(firefoxOptions);
+        firefoxBinary = new FirefoxBinary(); // Proper initialization
     }
+
 
     @After
     public void quitWebDriver() {
@@ -42,8 +30,15 @@ public class GoogleSearchSteps {
 
     @Given("I open google search page")
     public void i_open_google_search_page() {
+        firefoxBinary.addCommandLineOptions("--headless");
+        firefoxBinary.addCommandLineOptions("--no-sandbox");
+        System.setProperty("webdriver.gecko.driver", "/usr/bin/geckodriver");
+        FirefoxOptions firefoxOptions = new FirefoxOptions();
+        firefoxOptions.setBinary(firefoxBinary);
+        driver = new FirefoxDriver(firefoxOptions);
         driver.get("https://www.google.com");
     }
+
 
     @When("I lookup the word {string}")
     public void i_lookup_the_word(String string) {
